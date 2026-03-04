@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 interface NavBarProps
 {
@@ -8,26 +8,96 @@ interface NavBarProps
 
 const NavBar: React.FC<NavBarProps> = ( { isAuthenticated } ) =>
 {
+    const location = useLocation();
+    const [ mobileMenuOpen, setMobileMenuOpen ] = useState( false );
+
+    const isActive = ( path: string ) => location.pathname === path;
+
+    const navItems = [
+        { path: '/', label: 'Home', auth: false },
+        { path: '/events', label: 'Events', auth: true },
+        { path: '/calendar', label: 'Calendar', auth: true },
+        { path: '/documentation', label: 'Documentation', auth: false },
+    ];
 
     return (
-        <nav className="text-white py-4 px-6">
-            <div className="flex">
+        <>
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center gap-2">
+                {navItems.map( ( item ) =>
+                {
+                    if ( item.auth && !isAuthenticated ) return null;
 
-                <div className="hidden md:flex space-x-6 text-xl">
+                    return (
+                        <Link
+                            key={item.path}
+                            to={item.path}
+                            className={`px-4 py-2 rounded-lg font-medium transition-all duration-base
+                                ${ isActive( item.path )
+                                    ? 'bg-primary-50 text-primary-700 shadow-sm'
+                                    : 'text-neutral-700 hover:bg-neutral-50 hover:text-primary-600'
+                                }`}
+                        >
+                            {item.label}
+                        </Link>
+                    );
+                } )}
+            </nav>
 
-                    {isAuthenticated && (
-                        <>
-                            <Link to="/" className="hover:text-white">Home</Link>
-                            <Link to="/events" className="hover:text-white">Events</Link>
-                            <Link to="/calendar" className="hover:text-white">Calendar</Link>
-                        </>
+            {/* Mobile Menu Button */}
+            <button
+                onClick={() => setMobileMenuOpen( !mobileMenuOpen )}
+                className="md:hidden p-2 text-neutral-700 hover:bg-neutral-50 rounded-lg 
+                         transition-colors duration-base"
+                aria-label="Toggle menu"
+            >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    {mobileMenuOpen ? (
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12" />
+                    ) : (
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                            d="M4 6h16M4 12h16M4 18h16" />
                     )}
-                    <Link to="/documentation" className="hover:text-white">Documentation</Link>
-                </div>
+                </svg>
+            </button>
 
-                {/* Mobile Menu Toggle */}
-            </div>
-        </nav>
+            {/* Mobile Navigation Overlay */}
+            {mobileMenuOpen && (
+                <>
+                    <div
+                        className="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm z-40 md:hidden"
+                        onClick={() => setMobileMenuOpen( false )}
+                    />
+                    <div className="fixed top-16 left-0 right-0 bg-white border-b border-neutral-200 
+                                  shadow-overlay z-50 md:hidden">
+                        <nav className="container mx-auto px-6 py-4">
+                            <div className="flex flex-col gap-2">
+                                {navItems.map( ( item ) =>
+                                {
+                                    if ( item.auth && !isAuthenticated ) return null;
+
+                                    return (
+                                        <Link
+                                            key={item.path}
+                                            to={item.path}
+                                            onClick={() => setMobileMenuOpen( false )}
+                                            className={`px-4 py-3 rounded-lg font-medium transition-all duration-base
+                                                ${ isActive( item.path )
+                                                    ? 'bg-primary-50 text-primary-700'
+                                                    : 'text-neutral-700 hover:bg-neutral-50 hover:text-primary-600'
+                                                }`}
+                                        >
+                                            {item.label}
+                                        </Link>
+                                    );
+                                } )}
+                            </div>
+                        </nav>
+                    </div>
+                </>
+            )}
+        </>
     );
 };
 

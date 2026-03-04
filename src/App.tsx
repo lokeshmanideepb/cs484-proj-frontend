@@ -26,8 +26,8 @@ function App ()
             element={<PrivateRoute element={<OnboardingFlow />} />}
           />
           <Route
-            path="/events"
-            element={<PrivateRoute element={<EventsPage />} />}
+            path="/events" element={<EventsPage />}
+          // element={<PrivateRoute element={<EventsPage />} />}
           />
           <Route
             path="/event/:eventId"
