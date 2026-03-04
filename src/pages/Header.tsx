@@ -79,7 +79,7 @@ const Header: React.FC = () =>
                 <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 
                               rounded-full flex items-center justify-center text-white font-semibold 
                               shadow-raised">
-                  {user.fullName.charAt( 0 ).toUpperCase()}
+                  {user.fullName ? user.fullName.charAt( 0 ).toUpperCase() : "U"}
                 </div>
                 <div className="text-left">
                   <div className="text-sm font-semibold text-neutral-900 leading-tight">

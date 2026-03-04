@@ -50,7 +50,6 @@ const EventCard: React.FC<EventCardProps> = ( { event } ) =>
   {
     eventDate = new Date();
   }
-  const dateString = DateTimeUtils.toLongDateString( eventDate );
   let tillDateString: string | null = null;
   if ( event.till_date )
   {
